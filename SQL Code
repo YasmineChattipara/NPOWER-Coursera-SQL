@@ -1,0 +1,90 @@
+EMPLOYEE Table
+Q: #Retrieve the list of all employees, first and last names, whose first names start with ‘S’.
+SELECT F_NAME,L_NAME FROM employees WHERE F_NAME LIKE 'S%';
+
+Q: #Arrange all the records of the EMPLOYEES table in ascending order of the date of birth.
+SELECT * FROM employees 
+ORDER BY B_DATE;
+
+Q: #Group the records in terms of the department IDs and filter them of ones that have average salary more than or equal to 60000. 
+    Display the department ID and the average salary, sort by avg salary in descendingorder
+SELECT DEP_ID, AVG(SALARY) AS AVG_SALARY FROM employees 
+GROUP BY DEP_ID
+HAVING AVG_SALARY>60000
+ORDER BY AVG_SALARY DESC;
+
+1.	Q: Write a query that calculates the total cost of all animal rescues in the PETRESCUE table.
+SELECT SUM(COST) AS TOTAL_COST FROM PETRESCUE;
+
+2.	Write a query that displays the maximum quantity of animals rescued (of any kind).
+SELECT MAX(QUANTITY) AS MAX_QTY FROM PETRESCUE;
+
+3.	Animals rescued should see the vet within three days of arrival. Write a query that displays the third day of each rescue., 2 months to date, 3 DAYS BEFORE
+SELECT DATE_ADD(RESCUEDATE,INTERVAL 3 DAY) FROM PETRESCUE;
+SELECT DATE_ADD(RESCUEDATE,INTERVAL 2 MONTH) FROM PETRESCUE;
+SELECT DATE_SUB(RESCUEDATE,INTERVAL 3 DAY) FROM PETRESCUE;
+
+4.	Write a query that displays the length of time the animals have been rescued, for example, the difference between the current date and the rescue date.
+SELECT DATEDIFF(CURRENT_DATE, RESCUEDATE) FROM PETRESCUE
+
+To present the output in a YYYY-MM-DD format, another function FROM_DAYS(number_of_days)can be used.
+
+5.	Write a query that displays the average cost of rescuing a single dog. Note that the cost per dog would not be the same in different instances.
+SELECT AVG(COST/QUANTITY) FROM PETRESCUE
+WHERE LCASE(ANIMAL)='dog';
+
+6.	Write a query that displays the animal name in each rescue in uppercase without duplications.
+SELECT DISTINCT UCASE(ANIMAL) FROM PETRESCUE;
+
+7.	Write a query that displays all the columns from the PETRESCUE table where the animal(s) rescued are cats. Use cat in lowercase in the query.
+SELECT * FROM PETRESCUE
+WHERE LCASE(ANIMAL)='cat';
+
+8.	Write a query that displays the number of rescues in the 5th month.
+SELECT SUM(QUANTITY) FROM PETRESCUE
+WHERE MONTH(RESCUEDATE)=5;
+
+9.	The rescue shelter is supposed to find good homes for all animals within 1 year of their rescue. Write a query that displays the ID and the target date.
+SELECT ID, RESCUEDATE,DATE_ADD(RESCUEDATE, INTERVAL 1 YEAR) AS TARGET_DATE FROM PETRESCUE;
+
+10.	retrieve all employee records whose salary is lower than the average salary.
+SELECT * 
+FROM EMPLOYEES 
+WHERE salary < (SELECT AVG(salary) FROM EMPLOYEES);
+
+11.	Retrieve the average salary of the top 5 earners in the company.
+SELECT AVG(SALARY) FROM (SELECT SALARY FROM EMPLOYEES ORDER BY SALARY DESC LIMIT 5) AS SALARY_TABLE;
+
+12.	12.  Write a query to find the average salary of the five least-earning employees.
+SELECT AVG(SALARY) FROM (SELECT SALARY FROM EMPLOYEES ORDER BY SALARY LIMIT 5) AS SALARY_TABLE;
+
+13.	13. Write a query to find the records of employees older than the average age of all employees.
+SELECT * FROM EMPLOYEES 
+WHERE YEAR(FROM_DAYS(DATEDIFF(CURRENT_DATE,B_DATE))) > 
+ (SELECT AVG(YEAR(FROM_DAYS(DATEDIFF(CURRENT_DATE,B_DATE)))) FROM EMPLOYEES);
+
+14.	From the Job_History table, display the list of Employee IDs, years of service, and average years of service for all entries.
+SELECT EMPL_ID, YEAR(FROM_DAYS(DATEDIFF(CURRENT_DATE, START_DATE))), 
+    (SELECT AVG(YEAR(FROM_DAYS(DATEDIFF(CURRENT_DATE, START_DATE)))) 
+    FROM JOB_HISTORY)
+FROM JOB_HISTORY;
+
+1.	Retrieve only the EMPLOYEES records corresponding to jobs in the JOBS table.
+SELECT * FROM EMPLOYEES WHERE JOB_ID IN (SELECT JOB_IDENT FROM JOBS);
+
+2.	Retrieve JOB information for employees earning over $70,000.
+SELECT JOB_TITLE, MIN_SALARY, MAX_SALARY, JOB_IDENT
+FROM JOBS
+WHERE JOB_IDENT IN (select JOB_ID from EMPLOYEES where SALARY > 70000 );
+
+1.	Retrieve only the list of employees whose JOB_TITLE is Jr. Designer.
+SELECT *
+FROM EMPLOYEES
+WHERE JOB_ID IN (SELECT JOB_IDENT
+                 FROM JOBS
+                 WHERE JOB_TITLE= 'Jr. Designer');
+
+2.	Retrieve JOB information and a list of employees whose birth year is after 1976.
+SELECT JOB_TITLE, MIN_SALARY, MAX_SALARY, JOB_IDENT
+FROM JOBS
+WHERE JOB_IDENT IN (SELECT JOB_ID FROM EMPLOYEES WHERE YEAR(B_DATE)>1976 );
